@@ -19,7 +19,7 @@ const { connectToDB } = require("./database/db")
 // server init
 const server=express()
 server.use(cors({
-    origin: 'http://localhost:3000', // Allow only this origin
+    origin:'*',
     credentials: true,
 }))
 
