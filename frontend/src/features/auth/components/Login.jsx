@@ -86,18 +86,42 @@ export const Login = () => {
   //   dispatch(loginAsync(cred))
 
 
+  // const handleLogin = async (data) => {
+  //   const cred = { ...data };
+  //   delete cred.confirmPassword; // Ensure this is correct
+
+  //   console.log("Attempting to login with credentials:", cred); // Log the credentials being used
+
+  //   try {
+  //     const response = await dispatch(loginAsync(cred));
+  //     console.log("Response from loginAsync:", response); // Log the response
+
+  //     if (response && response.payload) {
+  //       console.log("Login response data:", response.payload); // Log the payload
+  //     } else {
+  //       console.error("Unexpected response structure:", response);
+  //       toast.error("Login failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during login:", error); // Log the caught error
+  //     toast.error("An error occurred during login");
+  //   }
+  // };
   const handleLogin = async (data) => {
     const cred = { ...data };
     delete cred.confirmPassword; // Ensure this is correct
-
+  
     console.log("Attempting to login with credentials:", cred); // Log the credentials being used
-
+  
     try {
       const response = await dispatch(loginAsync(cred));
       console.log("Response from loginAsync:", response); // Log the response
-
-      if (response && response.payload) {
-        console.log("Login response data:", response.payload); // Log the payload
+  
+      if (response.type === 'auth/loginAsync/rejected') {
+        console.error("Login failed with error:", response.error.message); // Log the error message
+        toast.error(response.error.message); // Show error message from backend
+      } else if (response && response.payload) {
+        console.log("Login response data:", response.payload); // Log the payload for successful login
       } else {
         console.error("Unexpected response structure:", response);
         toast.error("Login failed. Please try again.");
@@ -107,7 +131,7 @@ export const Login = () => {
       toast.error("An error occurred during login");
     }
   };
-
+  
   return (
     <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
         
