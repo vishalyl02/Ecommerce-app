@@ -46,45 +46,86 @@ exports.signup=async(req,res)=>{
     }
 }
 
-exports.login=async(req,res)=>{
+// exports.login=async(req,res)=>{
+//     try {
+//         // checking if user exists or not
+//         const existingUser=await User.findOne({email:req.body.email})
+
+//         // if exists and password matches the hash
+//         if(existingUser && (await bcrypt.compare(req.body.password,existingUser.password))){
+
+//             // getting secure user info
+//             const secureInfo=sanitizeUser(existingUser)
+
+//             // generating jwt token
+//             const token=generateToken(secureInfo)
+
+//             // sending jwt token in the response cookies
+//             // res.cookie('token',token,{
+//             //     sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
+//             //     maxAge:new Date(Date.now() + (parseInt(process.env.COOKIE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000))),
+//             //     httpOnly:true,
+//             //     secure:process.env.PRODUCTION==='true'?true:false
+//             // })
+//             res.cookie('token', token, {
+//                 sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
+//                 maxAge: parseInt(process.env.COOKIE_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000, // duration in milliseconds
+//                 httpOnly: true,
+//                 secure: process.env.PRODUCTION === 'true'
+//             });
+            
+//             return res.status(200).json(sanitizeUser(existingUser))
+//         }
+
+//         res.clearCookie('token');
+//         return res.status(404).json({message:"Invalid Credentails"})
+//     } catch (error) {
+//         console.log(error);
+        
+//         res.status(500).json({message:'Some error occured while logging in, please try again later'})
+//     }
+// }
+exports.login = async (req, res) => {
     try {
-        // checking if user exists or not
-        const existingUser=await User.findOne({email:req.body.email})
+        // Log the received request data
+        console.log("Login request received with email:", req.body.email);
 
-        // if exists and password matches the hash
-        if(existingUser && (await bcrypt.compare(req.body.password,existingUser.password))){
+        const existingUser = await User.findOne({ email: req.body.email });
 
-            // getting secure user info
-            const secureInfo=sanitizeUser(existingUser)
+        if (existingUser && (await bcrypt.compare(req.body.password, existingUser.password))) {
+            console.log("User found and authenticated successfully.");
 
-            // generating jwt token
-            const token=generateToken(secureInfo)
+            const secureInfo = sanitizeUser(existingUser);
+            const token = generateToken(secureInfo);
 
-            // sending jwt token in the response cookies
-            // res.cookie('token',token,{
-            //     sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
-            //     maxAge:new Date(Date.now() + (parseInt(process.env.COOKIE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000))),
-            //     httpOnly:true,
-            //     secure:process.env.PRODUCTION==='true'?true:false
-            // })
+            // Log values that will be used for the cookie settings
+            console.log("Environment variables:");
+            console.log("PRODUCTION:", process.env.PRODUCTION);
+            console.log("COOKIE_EXPIRATION_DAYS:", process.env.COOKIE_EXPIRATION_DAYS);
+
+            const cookieExpiration = parseInt(process.env.COOKIE_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000;
+            console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
+
+            // Set the cookie with detailed logging
             res.cookie('token', token, {
                 sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
-                maxAge: parseInt(process.env.COOKIE_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000, // duration in milliseconds
+                maxAge: cookieExpiration, // duration in milliseconds
                 httpOnly: true,
                 secure: process.env.PRODUCTION === 'true'
             });
-            
-            return res.status(200).json(sanitizeUser(existingUser))
+            console.log("Cookie set with token:", token);
+
+            return res.status(200).json(sanitizeUser(existingUser));
         }
 
         res.clearCookie('token');
-        return res.status(404).json({message:"Invalid Credentails"})
+        console.log("Invalid credentials. Cookie cleared.");
+        return res.status(404).json({ message: "Invalid Credentials" });
     } catch (error) {
-        console.log(error);
-        
-        res.status(500).json({message:'Some error occured while logging in, please try again later'})
+        console.error("Error in login:", error);
+        res.status(500).json({ message: 'Some error occurred while logging in, please try again later' });
     }
-}
+};
 
 exports.verifyOtp=async(req,res)=>{
     try {
