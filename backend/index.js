@@ -30,7 +30,7 @@ const server=express()
 
 
 const allowedOrigins = [
-    'https://ecommerce-app-ps2h.vercel.app', // Production frontend URL
+    // 'https://ecommerce-app-ps2h.vercel.app', // Production frontend URL
     'http://localhost:3000' // Local development URL
 
 ];
