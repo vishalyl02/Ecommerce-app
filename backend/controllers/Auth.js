@@ -110,8 +110,9 @@ exports.login = async (req, res) => {
             // Log values that will be used for the cookie settings
             console.log("Environment variables:");
             console.log("PRODUCTION:", process.env.PRODUCTION);
-            console.log("COOKIE_EXPIRATION_DAYS:", process.env.COOKIE_EXPIRATION_DAYS);
+          
             const cookieExpirationDays = process.env.COOKIE_EXPIRATION_DAYS || 30;
+            console.log("cookieExpirationDays:", cookieExpirationDays);
             const cookieExpiration = parseInt(cookieExpirationDays) * 24 * 60 * 60 * 1000;
             console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
 
