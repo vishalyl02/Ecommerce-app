@@ -74,6 +74,7 @@ exports.login=async(req,res)=>{
         return res.status(404).json({message:"Invalid Credentails"})
     } catch (error) {
         console.log(error);
+        
         res.status(500).json({message:'Some error occured while logging in, please try again later'})
     }
 }
@@ -144,6 +145,55 @@ exports.resendOtp=async(req,res)=>{
         console.log(error);
     }
 }
+
+
+// exports.resendOtp = async (req, res) => {
+//     console.log("Sending OTP to user:", req.body.user);
+
+//     try {
+//         // Check if the request body contains the user ID
+//         if (!req.body || !req.body.user) {
+//             return res.status(400).json({ "message": "User ID is required" });
+//         }
+
+//         const existingUser = await User.findById(req.body.user);
+// console.log(existingUser)
+//         if (!existingUser) {
+//             return res.status(404).json({ "message": "User not found" });
+//         }
+
+//         // Delete any existing OTP records for the user
+//         await Otp.deleteMany({ user: existingUser._id });
+
+//         // Generate a new OTP
+//         const otp = generateOTP();
+//         console.log("I am otp "+ otp);
+//         const hashedOtp = await bcrypt.hash(otp, 10);
+// console.log("I am hasheed otp"+hashedOtp)
+//         // Create a new OTP record
+//         const newOtp = new Otp({
+//             user: req.body.user,
+//             otp: hashedOtp,
+//             expiresAt: Date.now() + parseInt(process.env.OTP_EXPIRATION_TIME),
+//         });
+// console.log("Iam new otp"+newOtp)
+//         await newOtp.save();
+
+//         console.log("I am .save(")
+//         // Send the OTP via email
+//         await sendMail(
+//             existingUser.email,
+//             `OTP Verification for Your MERN-AUTH-REDUX-TOOLKIT Account`,
+//             `Your One-Time Password (OTP) for account verification is: <b>${otp}</b>.</br>Do not share this OTP with anyone for security reasons`
+//         );
+//         console.log("I am .after ")
+//         res.status(201).json({ 'message': "OTP sent" });
+//     } catch (error) {
+//         console.error("Error in resendOtp:", error); // Log the error with more context
+//         res.status(500).json({ 'message': "Some error occurred while resending OTP, please try again later" });
+//     }
+// };
+
 
 exports.forgotPassword=async(req,res)=>{
     let newToken;

@@ -37,6 +37,7 @@ exports.verifyToken=async(req,res,next)=>{
             return res.status(401).json({ message: "Invalid Token, please login again" });
         } 
         else {
+            console.log("I am here here")
             return res.status(500).json({ message: "Internal Server Error" });
         }
     }
