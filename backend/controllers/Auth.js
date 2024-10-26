@@ -94,51 +94,108 @@ exports.signup=async(req,res)=>{
 //         res.status(500).json({message:'Some error occured while logging in, please try again later'})
 //     }
 // }
-exports.login = async (req, res) => {
-    try {
-        // Log the received request data
-        console.log("Login request received with email:", req.body.email);
+// exports.login = async (req, res) => {
+//     try {
+//         // Log the received request data
+//         console.log("Login request received with email:", req.body.email);
 
-        const existingUser = await User.findOne({ email: req.body.email });
+//         const existingUser = await User.findOne({ email: req.body.email });
 
-        if (existingUser && (await bcrypt.compare(req.body.password, existingUser.password))) {
-            console.log("User found and authenticated successfully.");
+//         if (existingUser && (await bcrypt.compare(req.body.password, existingUser.password))) {
+//             console.log("User found and authenticated successfully.");
 
-            const secureInfo = sanitizeUser(existingUser);
-            const token = generateToken(secureInfo);
+//             const secureInfo = sanitizeUser(existingUser);
+//             const token = generateToken(secureInfo);
 
-            // Log values that will be used for the cookie settings
-            console.log("Environment variables:");
-            console.log("PRODUCTION:", process.env.PRODUCTION);
+//             // Log values that will be used for the cookie settings
+//             console.log("Environment variables:");
+//             console.log("PRODUCTION:", process.env.PRODUCTION);
           
-            const cookieExpirationDays = process.env.COOKIE_EXPIRATION_DAYS || 30;
-            console.log("cookieExpirationDays:", cookieExpirationDays);
-            const cookieExpiration = parseInt(cookieExpirationDays) * 24 * 60 * 60 * 1000;
-            console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
+//             const cookieExpirationDays = process.env.COOKIE_EXPIRATION_DAYS || 30;
+//             console.log("cookieExpirationDays:", cookieExpirationDays);
+//             const cookieExpiration = parseInt(cookieExpirationDays) * 24 * 60 * 60 * 1000;
+//             console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
 
-            // Set the cookie with detailed logging
-            res.cookie('token', token, {
-                sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
-                maxAge: cookieExpiration, // duration in milliseconds
-                httpOnly: true,
-                secure: process.env.PRODUCTION === 'true'
-            });
-            console.log("Cookie set with token:", token);
+//             // Set the cookie with detailed logging
+//             res.cookie('token', token, {
+//                 sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
+//                 maxAge: cookieExpiration, // duration in milliseconds
+//                 httpOnly: true,
+//                 secure: process.env.PRODUCTION === 'true'
+//             });
+//             console.log("Cookie set with token:", token);
 
-            const p=sanitizeUser(existingUser)
-            // console.log("Iam sanitizer ",res.status(200).json(sanitizeUser(existingUser)))
+//             const p=sanitizeUser(existingUser)
+//             // console.log("Iam sanitizer ",res.status(200).json(sanitizeUser(existingUser)))
 
-            return res.status(200).json(sanitizeUser(existingUser));
-        }
+//             return res.status(200).json(sanitizeUser(existingUser));
+//         }
 
-        res.clearCookie('token');
-        console.log("Invalid credentials. Cookie cleared.");
-        return res.status(404).json({ message: "Invalid Credentials" });
-    } catch (error) {
-        console.error("Error in login:", error);
-        res.status(500).json({ message: 'Some error occurred while logging in, please try again later' });
-    }
-};
+//         res.clearCookie('token');
+//         console.log("Invalid credentials. Cookie cleared.");
+//         return res.status(404).json({ message: "Invalid Credentials" });
+//     } catch (error) {
+//         console.error("Error in login:", error);
+//         res.status(500).json({ message: 'Some error occurred while logging in, please try again later' });
+//     }
+// };
+
+
+
+const timeoutPromise = (promise, ms) => {
+    let timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Request timed out")), ms)
+    );
+    return Promise.race([promise, timeout]);
+  };
+  
+  exports.login = async (req, res) => {
+      try {
+          console.log("Login request received with email:", req.body.email);
+  
+          // Set a timeout for the database query
+          const existingUser = await timeoutPromise(
+            User.findOne({ email: req.body.email }),
+            5000  // Timeout after 5 seconds
+          );
+  
+          if (existingUser && (await timeoutPromise(bcrypt.compare(req.body.password, existingUser.password), 3000))) {
+              console.log("User found and authenticated successfully.");
+  
+              const secureInfo = sanitizeUser(existingUser);
+              const token = generateToken(secureInfo);
+  
+              console.log("Environment variables:");
+              console.log("PRODUCTION:", process.env.PRODUCTION);
+  
+              const cookieExpirationDays = process.env.COOKIE_EXPIRATION_DAYS || 30;
+              console.log("cookieExpirationDays:", cookieExpirationDays);
+              const cookieExpiration = parseInt(cookieExpirationDays) * 24 * 60 * 60 * 1000;
+              console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
+  
+              res.cookie('token', token, {
+                  sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
+                  maxAge: cookieExpiration,
+                  httpOnly: true,
+                  secure: process.env.PRODUCTION === 'true'
+              });
+              console.log("Cookie set with token:", token);
+  
+              return res.status(200).json(sanitizeUser(existingUser));
+          }
+  
+          res.clearCookie('token');
+          console.log("Invalid credentials. Cookie cleared.");
+          return res.status(404).json({ message: "Invalid Credentials" });
+      } catch (error) {
+          console.error("Error in login:", error);
+          res.status(500).json({ message: 'Some error occurred while logging in, please try again later' });
+      }
+  };
+  
+
+
+
 
 exports.verifyOtp=async(req,res)=>{
     try {
