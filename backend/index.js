@@ -16,29 +16,19 @@ const wishlistRoutes=require("./routes/Wishlist")
 const { connectToDB } = require("./database/db")
 
 
-// server init
+
+
 const server=express()
-// server.use(cors({
-//     origin:'https://ecommerce-app-ps2h.vercel.app',
-//     // origin:'*',
-//     credentials: true,
-// }))
-
-
-
-
 
 
 const allowedOrigins = [
-    // 'https://ecommerce-app-ps2h.vercel.app', // Production frontend URL
-    'http://localhost:3000' // Local development URL
-
+    'https://ecommerce-app-ps2h.vercel.app',
+    'http://localhost:3000' 
 ];
 
 // Middleware for CORS handling
 server.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or Postman)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true); // Origin is allowed
         } else {

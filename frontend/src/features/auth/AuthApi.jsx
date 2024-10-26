@@ -11,8 +11,18 @@ export const signup=async(cred)=>{
 }
 export const login=async(cred)=>{
     try {
-        const res=await axiosi.post("auth/login",cred)
-       console.log("I am data", res.data);
+
+
+        const res = await axiosi.post("auth/login", {
+      key: cred // Replace with your actual data
+    }, {
+      withCredentials: true, // Important for sending cookies
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    //     const res=await axiosi.post("auth/login",cred)
+    //    console.log("I am data", res.data);
         return res.data
     } catch (error) {
         throw error.response.data
