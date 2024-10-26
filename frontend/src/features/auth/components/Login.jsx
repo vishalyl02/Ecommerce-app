@@ -22,39 +22,70 @@ export const Login = () => {
   const is480=useMediaQuery(theme.breakpoints.down(480))
   
   // handles user redirection
-  useEffect(()=>{
-    if(loggedInUser && loggedInUser?.isVerified){
-      navigate("/")
+  // useEffect(()=>{
+  //   if(loggedInUser && loggedInUser?.isVerified){
+  //     navigate("/")
+  //   }
+  //   else if(loggedInUser && !loggedInUser?.isVerified){
+  //     navigate("/verify-otp")
+  //   }
+  // },[loggedInUser])
+
+  // // handles login error and toast them
+  // useEffect(()=>{
+  //   if(error){
+  //     toast.error(error.message)
+  //   }
+  // },[error])
+
+  useEffect(() => {
+    console.log("Checking logged in user:", loggedInUser);
+    if (loggedInUser && loggedInUser?.isVerified) {
+      navigate("/");
+    } else if (loggedInUser && !loggedInUser?.isVerified) {
+      navigate("/verify-otp");
     }
-    else if(loggedInUser && !loggedInUser?.isVerified){
-      navigate("/verify-otp")
-    }
-  },[loggedInUser])
+  }, [loggedInUser, navigate]);
 
   // handles login error and toast them
-  useEffect(()=>{
-    if(error){
-      toast.error(error.message)
+  useEffect(() => {
+    if (error) {
+      console.error("Login error:", error); // Log the error for debugging
+      toast.error(error.message);
     }
-  },[error])
+  }, [error]);
+
+
 
   // handles login status and dispatches reset actions to relevant states in cleanup
-  useEffect(()=>{
-    if(status==='fullfilled' && loggedInUser?.isVerified===true){
-      toast.success(`Login successful`)
-      reset()
-    }
-    return ()=>{
-      dispatch(clearLoginError())
-      dispatch(resetLoginStatus())
-    }
-  },[status])
+  // useEffect(()=>{
+  //   if(status==='fullfilled' && loggedInUser?.isVerified===true){
+  //     toast.success(`Login successful`)
+  //     reset()
+  //   }
+  //   return ()=>{
+  //     dispatch(clearLoginError())
+  //     dispatch(resetLoginStatus())
+  //   }
+  // },[status])
 
-  const handleLogin=(data)=>{
-    const cred={...data}
-    delete cred.confirmPassword
-    dispatch(loginAsync(cred))
-  }
+  useEffect(() => {
+    if (status === 'fulfilled' && loggedInUser?.isVerified === true) {
+      toast.success(`Login successful`);
+      reset();
+    }
+    return () => {
+      dispatch(clearLoginError());
+      dispatch(resetLoginStatus());
+    };
+  }, [status, loggedInUser, reset, dispatch]);
+
+  const handleLogin = (data) => {
+    console.log("Login form data:", data); // Log the data being sent for login
+    const cred = { ...data };
+    delete cred.confirmPassword; // Ensure this key doesn't exist in the credentials
+    dispatch(loginAsync(cred));
+  };
 
   return (
     <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
