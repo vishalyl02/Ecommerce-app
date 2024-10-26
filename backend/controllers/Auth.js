@@ -31,12 +31,20 @@ exports.signup=async(req,res)=>{
         const token=generateToken(secureInfo)
 
         // sending jwt token in the response cookies
-        res.cookie('token',token,{
-            sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
-            maxAge:new Date(Date.now() + (parseInt(process.env.COOKIE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000))),
-            httpOnly:true,
-            secure:process.env.PRODUCTION==='true'?true:false
-        })
+        console.log("Environment variables:");
+            console.log("PRODUCTION:", process.env.PRODUCTION);
+            console.log("COOKIE_EXPIRATION_DAYS:", process.env.COOKIE_EXPIRATION_DAYS);
+            const cookieExpirationDays = process.env.COOKIE_EXPIRATION_DAYS || 30;
+            const cookieExpiration = parseInt(cookieExpirationDays) * 24 * 60 * 60 * 1000;
+            console.log("Calculated maxAge for cookie (ms):", cookieExpiration);
+
+            // Set the cookie with detailed logging
+            res.cookie('token', token, {
+                sameSite: process.env.PRODUCTION === 'true' ? 'None' : 'Lax',
+                maxAge: cookieExpiration, // duration in milliseconds
+                httpOnly: true,
+                secure: process.env.PRODUCTION === 'true'
+            });
 
         res.status(201).json(sanitizeUser(createdUser))
 
