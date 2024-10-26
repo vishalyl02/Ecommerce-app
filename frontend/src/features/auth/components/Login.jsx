@@ -22,69 +22,90 @@ export const Login = () => {
   const is480=useMediaQuery(theme.breakpoints.down(480))
   
   // handles user redirection
-  // useEffect(()=>{
-  //   if(loggedInUser && loggedInUser?.isVerified){
-  //     navigate("/")
-  //   }
-  //   else if(loggedInUser && !loggedInUser?.isVerified){
-  //     navigate("/verify-otp")
-  //   }
-  // },[loggedInUser])
-
-  // // handles login error and toast them
-  // useEffect(()=>{
-  //   if(error){
-  //     toast.error(error.message)
-  //   }
-  // },[error])
-
-  useEffect(() => {
-    console.log("Checking logged in user:", loggedInUser);
-    if (loggedInUser && loggedInUser?.isVerified) {
-      navigate("/");
-    } else if (loggedInUser && !loggedInUser?.isVerified) {
-      navigate("/verify-otp");
+  useEffect(()=>{
+    if(loggedInUser && loggedInUser?.isVerified){
+      navigate("/")
     }
-  }, [loggedInUser, navigate]);
+    else if(loggedInUser && !loggedInUser?.isVerified){
+      navigate("/verify-otp")
+    }
+  },[loggedInUser])
 
   // handles login error and toast them
-  useEffect(() => {
-    if (error) {
-      console.error("Login error:", error); // Log the error for debugging
-      toast.error(error.message);
+  useEffect(()=>{
+    if(error){
+      toast.error(error.message)
     }
-  }, [error]);
+  },[error])
+
+  // useEffect(() => {
+  //   console.log("Checking logged in user:", loggedInUser);
+  //   if (loggedInUser && loggedInUser?.isVerified) {
+  //     navigate("/");
+  //   } else if (loggedInUser && !loggedInUser?.isVerified) {
+  //     navigate("/verify-otp");
+  //   }
+  // }, [loggedInUser, navigate]);
+
+  // // handles login error and toast them
+  // useEffect(() => {
+  //   if (error) {
+  //     console.error("Login error:", error); // Log the error for debugging
+  //     toast.error(error.message);
+  //   }
+  // }, [error]);
 
 
 
   // handles login status and dispatches reset actions to relevant states in cleanup
-  // useEffect(()=>{
-  //   if(status==='fullfilled' && loggedInUser?.isVerified===true){
-  //     toast.success(`Login successful`)
-  //     reset()
-  //   }
-  //   return ()=>{
-  //     dispatch(clearLoginError())
-  //     dispatch(resetLoginStatus())
-  //   }
-  // },[status])
-
-  useEffect(() => {
-    if (status === 'fulfilled' && loggedInUser?.isVerified === true) {
-      toast.success(`Login successful`);
-      reset();
+  useEffect(()=>{
+    if(status==='fullfilled' && loggedInUser?.isVerified===true){
+      toast.success(`Login successful`)
+      reset()
     }
-    return () => {
-      dispatch(clearLoginError());
-      dispatch(resetLoginStatus());
-    };
-  }, [status, loggedInUser, reset, dispatch]);
+    return ()=>{
+      dispatch(clearLoginError())
+      dispatch(resetLoginStatus())
+    }
+  },[status])
 
-  const handleLogin = (data) => {
-    console.log("Login form data:", data); // Log the data being sent for login
+  // useEffect(() => {
+  //   if (status === 'fulfilled' && loggedInUser?.isVerified === true) {
+  //     toast.success(`Login successful`);
+  //     reset();
+  //   }
+  //   return () => {
+  //     dispatch(clearLoginError());
+  //     dispatch(resetLoginStatus());
+  //   };
+  // }, [status, loggedInUser, reset, dispatch]);
+
+  // const handleLogin=(data)=>{
+  //   const cred={...data}
+  //   delete cred.confirmPassword
+  //   dispatch(loginAsync(cred))
+
+
+  const handleLogin = async (data) => {
     const cred = { ...data };
-    delete cred.confirmPassword; // Ensure this key doesn't exist in the credentials
-    dispatch(loginAsync(cred));
+    delete cred.confirmPassword; // Ensure this is correct
+  
+    try {
+      const response = await dispatch(loginAsync(cred));
+      // Log the response to debug
+      console.log("Response from loginAsync:", response);
+      
+      if (response && response.payload) {
+        // Check response structure and log it
+        console.log("Login response data:", response.payload);
+      } else {
+        console.error("Unexpected response structure:", response);
+        toast.error("Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      toast.error("An error occurred during login");
+    }
   };
 
   return (
