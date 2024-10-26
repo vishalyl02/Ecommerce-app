@@ -89,21 +89,21 @@ export const Login = () => {
   const handleLogin = async (data) => {
     const cred = { ...data };
     delete cred.confirmPassword; // Ensure this is correct
-  
+
+    console.log("Attempting to login with credentials:", cred); // Log the credentials being used
+
     try {
       const response = await dispatch(loginAsync(cred));
-      // Log the response to debug
-      console.log("Response from loginAsync:", response);
-      
+      console.log("Response from loginAsync:", response); // Log the response
+
       if (response && response.payload) {
-        // Check response structure and log it
-        console.log("Login response data:", response.payload);
+        console.log("Login response data:", response.payload); // Log the payload
       } else {
         console.error("Unexpected response structure:", response);
         toast.error("Login failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      console.error("Error during login:", error); // Log the caught error
       toast.error("An error occurred during login");
     }
   };
