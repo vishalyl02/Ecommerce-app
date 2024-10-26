@@ -125,6 +125,9 @@ exports.login = async (req, res) => {
             });
             console.log("Cookie set with token:", token);
 
+            const p=sanitizeUser(existingUser)
+            // console.log("Iam sanitizer ",res.status(200).json(sanitizeUser(existingUser)))
+
             return res.status(200).json(sanitizeUser(existingUser));
         }
 

@@ -28,21 +28,27 @@ const server=express()
 
 
 
+
 const allowedOrigins = [
-    'https://ecommerce-app-ps2h.vercel.app', // Your frontend URL
-    'http://localhost:3000', // Add your local development URL if needed
+    'https://ecommerce-app-ps2h.vercel.app', // Production frontend URL
+    'http://localhost:3000' // Local development URL
+
 ];
 
+// Middleware for CORS handling
 server.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps)
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true); // Origin is allowed
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error('Not allowed by CORS')); // Origin is not allowed
         }
     },
     credentials: true, // This allows cookies to be sent
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+    preflightContinue: false, // Pass the CORS preflight response to the next handler
 }));
 
 

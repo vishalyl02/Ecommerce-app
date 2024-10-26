@@ -107,30 +107,64 @@ export const Login = () => {
   //     toast.error("An error occurred during login");
   //   }
   // };
+  // const handleLogin = async (data) => {
+  //   const cred = { ...data };
+  //   delete cred.confirmPassword; // Ensure this is correct
+  
+  //   console.log("Attempting to login with credentials:", cred); // Log the credentials being used
+  
+  //   try {
+  //     const response = await dispatch(loginAsync(cred));
+  //     console.log("Response from loginAsync:", response); // Log the response
+  
+  //     if (response.type === 'auth/loginAsync/rejected') {
+  //       console.error("Login failed with error:", response.error.message); // Log the error message
+  //       toast.error(response.error.message); // Show error message from backend
+  //     } else if (response && response.payload) {
+  //       console.log("Login response data:", response.payload); // Log the payload for successful login
+  //     } else {
+  //       console.error("Unexpected response structure:", response);
+  //       toast.error("Login failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during login:", error); // Log the caught error
+  //     toast.error("An error occurred during login");
+  //   }
+  // };
+
   const handleLogin = async (data) => {
-    const cred = { ...data };
-    delete cred.confirmPassword; // Ensure this is correct
-  
-    console.log("Attempting to login with credentials:", cred); // Log the credentials being used
-  
+    const { email, password } = data; // Extract email and password
+    console.log("Attempting to login with credentials:", { email, password }); // Log the credentials
+
     try {
-      const response = await dispatch(loginAsync(cred));
-      console.log("Response from loginAsync:", response); // Log the response
-  
-      if (response.type === 'auth/loginAsync/rejected') {
-        console.error("Login failed with error:", response.error.message); // Log the error message
-        toast.error(response.error.message); // Show error message from backend
-      } else if (response && response.payload) {
-        console.log("Login response data:", response.payload); // Log the payload for successful login
-      } else {
-        console.error("Unexpected response structure:", response);
-        toast.error("Login failed. Please try again.");
-      }
+        const response = await dispatch(loginAsync({ email, password })); // Dispatch login action
+console.log("Iam in Login",response)
+console.log("Iam in Login response ",response.meta.arg)
+if(response.meta.arg.email!==undefined)
+{
+  toast.success("Login successful!"); // Notify success
+            navigate('/');
+}
+
+        // Check if the login is successful
+        // if (response.type === 'auth/loginAsync/fulfilled') {
+        //     console.log("Login successful!"); // Log success
+        //     toast.success("Login successful!"); // Notify success
+        //     navigate('/'); // Redirect to homepage
+        // } 
+        else {
+            // Handle login failure
+            const errorMessage = response.error.message || "Invalid email or password.";
+            console.error("Login failed:", errorMessage); // Log the error
+            toast.error(errorMessage); // Show error message
+        }
     } catch (error) {
-      console.error("Error during login:", error); // Log the caught error
-      toast.error("An error occurred during login");
+        // Handle unexpected errors
+        console.error("Error during login:", error); // Log the error
+        toast.error("An error occurred during login. Please try again."); // Notify user
     }
-  };
+};
+
   
   return (
     <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
