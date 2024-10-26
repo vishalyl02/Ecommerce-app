@@ -19,7 +19,7 @@ const { connectToDB } = require("./database/db")
 // server init
 const server=express()
 server.use(cors({
-    origin:'*',
+    origin:'https://ecommerce-app-ps2h.vercel.app',
     credentials: true,
 }))
 
