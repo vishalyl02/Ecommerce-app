@@ -18,11 +18,33 @@ const { connectToDB } = require("./database/db")
 
 // server init
 const server=express()
+// server.use(cors({
+//     origin:'https://ecommerce-app-ps2h.vercel.app',
+//     // origin:'*',
+//     credentials: true,
+// }))
+
+
+
+
+
+const allowedOrigins = [
+    'https://ecommerce-app-ps2h.vercel.app', // Your frontend URL
+    'http://localhost:3000', // Add your local development URL if needed
+];
+
 server.use(cors({
-    origin:'https://ecommerce-app-ps2h.vercel.app',
-    // origin:'*',
-    credentials: true,
-}))
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // This allows cookies to be sent
+}));
+
 
 // database connection
 connectToDB()
