@@ -22,12 +22,11 @@ const server=express()
 
 server.use(cors({
     origin: 'https://ecommerce-app-ps2h.vercel.app',
-    credentials: true, // Allow credentials
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
+    credentials: true, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
 }));
 
 
-// database connection
 connectToDB()
 
 
@@ -50,13 +49,7 @@ server.use("/reviews",reviewRoutes)
 server.use("/wishlist",wishlistRoutes)
 
 
-server.get("/", (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Max-Age", "1800");
-    res.setHeader("Access-Control-Allow-Headers", "content-type");
-    res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-     });
+
 server.get("/",(req,res)=>{
     res.status(200).json({message:'running'})
 })
@@ -65,5 +58,4 @@ const p=server.listen(8000,()=>{
     console.log('server [STARTED] ~ http://localhost:8000');
 })
 
- p.setTimeout(300000); // 5 minutes in milliseconds
   
