@@ -20,25 +20,10 @@ const { connectToDB } = require("./database/db")
 
 const server=express()
 
-
-const allowedOrigins = [
-    'https://ecommerce-app-ps2h.vercel.app',
-    'http://localhost:3000' 
-];
-
-// Middleware for CORS handling
 server.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true); // Origin is allowed
-        } else {
-            callback(new Error('Not allowed by CORS')); // Origin is not allowed
-        }
-    },
-    credentials: true, // This allows cookies to be sent
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-    preflightContinue: false, // Pass the CORS preflight response to the next handler
+    origin: '*', // Your frontend URL
+    credentials: true, // Allow credentials
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
 }));
 
 
@@ -65,7 +50,13 @@ server.use("/reviews",reviewRoutes)
 server.use("/wishlist",wishlistRoutes)
 
 
-
+server.get("/", (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Max-Age", "1800");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
+    res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+     });
 server.get("/",(req,res)=>{
     res.status(200).json({message:'running'})
 })

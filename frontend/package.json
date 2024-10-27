@@ -2,7 +2,11 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
    "proxy": "https://ecommerce-app-bdgj.vercel.app/",
+=======
+  "proxy": "https://ecommerce-app-bdgj.vercel.app/",
+>>>>>>> fdd2086 (Login again change)
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

@@ -140,18 +140,11 @@ export const Login = () => {
         const response = await dispatch(loginAsync({ email, password })); // Dispatch login action
 console.log("Iam in Login",response)
 console.log("Iam in Login response ",response.meta.arg)
-if(response.meta.arg.email!==undefined)
-{
-  toast.success("Login successful!"); // Notify success
-            navigate('/');
-}
-
-        // Check if the login is successful
-        // if (response.type === 'auth/loginAsync/fulfilled') {
-        //     console.log("Login successful!"); // Log success
-        //     toast.success("Login successful!"); // Notify success
-        //     navigate('/'); // Redirect to homepage
-        // } 
+        if (response.type === 'auth/loginAsync/fulfilled') {
+            console.log("Login successful!"); // Log success
+            toast.success("Login successful!"); // Notify success
+            navigate('/'); // Redirect to homepage
+        } 
         else {
             // Handle login failure
             const errorMessage = response.error.message || "Invalid email or password.";
