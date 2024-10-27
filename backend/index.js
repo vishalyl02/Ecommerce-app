@@ -20,17 +20,9 @@ const { connectToDB } = require("./database/db")
 
 const server=express()
 
-server.use(cors({
-    origin: 'https://ecommerce-app-ps2h.vercel.app',
-    credentials: true, 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-}));
-
-
 connectToDB()
 
 
-// middlewares
 server.use(cors({origin:process.env.ORIGIN,credentials:true,exposedHeaders:['X-Total-Count'],methods:['GET','POST','PATCH','DELETE']}))
 server.use(express.json())
 server.use(cookieParser())
