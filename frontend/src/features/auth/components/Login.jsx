@@ -60,7 +60,6 @@ export const Login = () => {
   // handles login status and dispatches reset actions to relevant states in cleanup
   useEffect(()=>{
     if(status==='fullfilled' && loggedInUser?.isVerified===true){
-      toast.success(`Login successful`)
       reset()
     }
     return ()=>{
@@ -141,7 +140,6 @@ export const Login = () => {
 console.log("Iam in Login",response)
 console.log("Iam in Login response ",response.meta.arg)
         if (response.type === 'auth/loginAsync/fulfilled') {
-            console.log("Login successful!"); // Log success
             toast.success("Login successful!"); // Notify success
             navigate('/'); // Redirect to homepage
         } 
